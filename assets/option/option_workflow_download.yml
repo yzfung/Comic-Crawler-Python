@@ -25,12 +25,31 @@ plugins:
       kwargs:
         username: ${JM_USERNAME}
         password: ${JM_PASSWORD}
+        
+    - plugin: jm_server 
+      kwargs:
+        password: '3333' # 服务器访问密码
+        base_dir: D:/a/b/c/ # 根目录，默认使用dir_rule.base_dir
+        
+        # 下面是高级配置，不配置也可以
+        
+        # run下的参数是flask框架的app对象的run方法参数，详见flask文档
+        run:
+          host: 0.0.0.0 # 默认接收所有ip的请求
+          port: 80 # 服务器端口，默认为80
+          debug: false # 是否开启debug模式，默认为false
 
   after_download: # 全部下载完成以后
-    - plugin: send_qq_email # 发送邮件，如果未配置下面的前3个环境变量则不会发送。
+    - plugin: zip # 压缩文件插件
       kwargs:
-        msg_from: ${EMAIL_FROM}
-        msg_to: ${EMAIL_TO}
-        password: ${EMAIL_PASS}
-        title: ${EMAIL_TITLE}
-        content: ${EMAIL_CONTENT}
+        level: photo # 按照章节，一个章节一个压缩文件
+        filename_rule: Ptitle # 压缩文件的命名规则
+        zip_dir: D:/jmcomic/zip/ # 压缩文件存放的文件夹
+        delete_original_file: true # 压缩成功后，删除所有原文件和文件夹
+        
+  after_photo:
+    - plugin: j2p # jpg图片合成为一个pdf插件
+      kwargs:
+        pdf_dir: D:/pdf # pdf存放文件夹
+        filename_rule: Pid # pdf命名规则
+        quality: 100 # pdf质量，0 - 100
